@@ -3,37 +3,27 @@ pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
 import "../mocks/ChainlinkDataMock/LZendpointMock.sol";
-import "../../src/01-ChainlinkPriceData/CrossChainDataFeedSender.sol";
-import "../../src/01-ChainlinkPriceData/CrossChainDataFeedReceiver.sol";
-import {MockV3Aggregator} from "../mocks/ChainlinkDataMock/MockV3Aggregator.sol";
+import "../../src/02-UmaOptimisticOracleData/UMASender.sol";
+import "../../src/02-UmaOptimisticOracleData/UMAReceiver.sol";
 import "../../script/Constants.s.sol";
 
 contract CrossChainDataFeedTest is Test, Constants {
     LZEndpointMock lzEndpointMock;
-    CrossChainDataFeedSender sender;
-    CrossChainDataFeedReceiver receiver;
-    MockV3Aggregator mockV3Aggregator;
+    UMASender sender;
+    UMAReceiver receiver;
 
     function setUp() public {
         hoax(address(0x1), 10 ether);
-
-        mockV3Aggregator = new MockV3Aggregator(DECIMAL, INITIAL_ANSWER);
 
         lzEndpointMock = new LZEndpointMock(localnetwork);
 
         vm.prank(address(0x2));
 
-        sender = new CrossChainDataFeedSender(
-            address(lzEndpointMock),
-            address(0x2)
-        );
+        sender = new UMASender(address(lzEndpointMock), address(0x2));
 
         hoax(address(0x3), 10 ether);
 
-        receiver = new CrossChainDataFeedReceiver(
-            address(lzEndpointMock),
-            address(0x3)
-        );
+        receiver = new UMAReceiver(address(lzEndpointMock), address(0x3));
 
         vm.deal(address(lzEndpointMock), 10 ether);
         vm.deal(address(sender), 10 ether);
@@ -67,12 +57,9 @@ contract CrossChainDataFeedTest is Test, Constants {
         receiver.setTrustedRemoteAddress(localnetwork, receiver_address);
     }
 
-    function testSepoliaToKaia() public {
+    function testEthToKaia() public {
         hoax(address(0x4), 10 ether);
-        sender.sendPriceData{value: 1 ether}(
-            localnetwork,
-            address(mockV3Aggregator)
-        );
+        sender.sendPriceData{value: 1 ether}(localnetwork);
 
         console.log(mockV3Aggregator.version());
         console.log(receiver.getLatestCrossChainPrice());

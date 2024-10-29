@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 /**
  * @title Universal store of current contract time for testing environments.
  */
-contract Timer {
+contract MockTimer {
     uint256 private currentTime;
 
     constructor() {

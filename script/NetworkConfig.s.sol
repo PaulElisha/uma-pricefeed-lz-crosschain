@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "forge-std/Script.sol";
 import "./Constants.s.sol";
-import "../test/mocks/LZEndpointMock.sol";
+import "../test/mocks/ChainlinkDataMock/LZEndpointMock.sol";
 
 contract NetworkConfig is Script, Constants {
     struct Config {

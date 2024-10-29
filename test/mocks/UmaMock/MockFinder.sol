@@ -8,7 +8,7 @@ import "@uma/oracle/interfaces/FinderInterface.sol";
  * @title Provides addresses of the live contracts implementing certain interfaces.
  * @dev Examples of interfaces with implementations that Finder locates are the Oracle and Store interfaces.
  */
-contract Finder is FinderInterface, Ownable {
+contract MockFinder is FinderInterface, Ownable {
     mapping(bytes32 => address) public interfacesImplemented;
 
     event InterfaceImplementationChanged(
