@@ -5,9 +5,9 @@ import "../lzApp/NonblockingLzApp.sol";
 import "forge-std/console.sol";
 
 contract UMAReceiver is NonblockingLzApp {
-    uint256 public data;
+    int256 public data;
 
-    event PriceDataReceived(uint256);
+    event PriceDataReceived(int256);
 
     constructor(
         address _lzEndpoint,
@@ -20,13 +20,13 @@ contract UMAReceiver is NonblockingLzApp {
         uint64,
         bytes memory _payload
     ) internal override {
-        uint256 _data = abi.decode(_payload, (uint256));
+        int256 _data = abi.decode(_payload, (int256));
         data = _data;
 
         emit PriceDataReceived(_data);
     }
 
-    function getLatestCrossChainPrice() public view returns (uint256) {
+    function getLatestCrossChainPrice() public view returns (int256) {
         return data;
     }
 }

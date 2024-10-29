@@ -3,19 +3,46 @@ pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
 import "../mocks/ChainlinkDataMock/LZendpointMock.sol";
-import "../../src/02-UmaOptimisticOracleData/UMASender.sol";
-import "../../src/02-UmaOptimisticOracleData/UMAReceiver.sol";
+import "../../src/02-UMAOptimisticOracleData/UMASender.sol";
+import "../../src/02-UMAOptimisticOracleData/UMAReceiver.sol";
+import "../mocks/UmaMock/MockOracle.sol";
+import "../mocks/UmaMock/MockIdentifierWhitelist.sol";
+import "../mocks/UmaMock/MockFinder.sol";
+import "../mocks/UmaMock/MockTimer.sol";
+// import "../mocks/UmaMock/lib/OracleInterfaces.sol";
 import "../../script/Constants.s.sol";
 
-contract CrossChainDataFeedTest is Test, Constants {
+contract GetUMADataTest is Test, Constants {
     LZEndpointMock lzEndpointMock;
     UMASender sender;
     UMAReceiver receiver;
+    MockOracle mockOracle;
+    MockIdentifierWhitelist mockIdentifierWhitelist;
+    MockFinder mockFinder;
+    MockTimer mockTimer;
+
+    bytes32 public identifier = "ETH/USD";
 
     function setUp() public {
+        mockFinder = new MockFinder(address(this));
+        mockTimer = new MockTimer();
+        mockIdentifierWhitelist = new MockIdentifierWhitelist(address(this));
+
+        vm.prank(mockFinder.owner());
+
+        mockFinder.changeImplementationAddress(
+            OracleInterfaces.IdentifierWhitelist,
+            address(mockIdentifierWhitelist)
+        );
+
         hoax(address(0x1), 10 ether);
 
+        mockOracle = new MockOracle(address(mockFinder), address(mockTimer));
+
         lzEndpointMock = new LZEndpointMock(localnetwork);
+
+        mockOracle.setVerifiedPrices(identifier, block.timestamp);
+        mockOracle.setQueryIndex(identifier, block.timestamp);
 
         vm.prank(address(0x2));
 
@@ -57,11 +84,10 @@ contract CrossChainDataFeedTest is Test, Constants {
         receiver.setTrustedRemoteAddress(localnetwork, receiver_address);
     }
 
-    function testEthToKaia() public {
+    function testSepoliaToKaia() public {
         hoax(address(0x4), 10 ether);
-        sender.sendPriceData{value: 1 ether}(localnetwork);
+        sender.sendPriceData{value: 1 ether}(localnetwork, address(mockOracle));
 
-        console.log(mockV3Aggregator.version());
         console.log(receiver.getLatestCrossChainPrice());
     }
 }

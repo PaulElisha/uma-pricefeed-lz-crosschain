@@ -18,13 +18,14 @@ contract UMASender is NonblockingLzApp {
 
     function sendPriceData(
         uint16 _dstChainid,
-        address pricefeedAddress
+        address oracleAddress
     ) public payable {
-        getUMAOracleData.requestData();
-        getUMAOracleData.settleRequest();
-        uint256 data = getUMAOracleData.getSettledData();
+        getUMAOracleData.setOracleAddress(oracleAddress);
 
-        bytes memory payload = abi.encode(data);
+        getUMAOracleData.requestData(getUMAOracleData.oracleAddress());
+        int256 priceData = getUMAOracleData.getPriceData();
+
+        bytes memory payload = abi.encode(priceData);
         // bytes memory adapterParams = abi.encodePacked(
         //     uint256(1),
         //     uint256(20000)

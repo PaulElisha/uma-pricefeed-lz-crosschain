@@ -59,9 +59,14 @@ contract MockIdentifierWhitelist is IdentifierWhitelistInterface, Ownable {
      *     WHITELIST GETTERS FUNCTIONS      *
      ****************************************/
 
-    function isIdentifierSupported(
-        bytes32 identifier
-    ) external view returns (bool) {
-        return supportedIdentifiers[identifier];
+    function isIdentifierSupported()
+        external
+        pure
+        returns (
+            // bytes32 identifier
+            bool
+        )
+    {
+        return true;
     }
 }

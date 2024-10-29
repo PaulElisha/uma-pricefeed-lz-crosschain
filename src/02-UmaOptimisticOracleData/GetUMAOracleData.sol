@@ -2,72 +2,36 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
-import "../interfaces/OptimisticOracleV2Interface.sol";
+import "../../test/mocks/UmaMock/MockOracle.sol";
+
+// import "../interfaces/OracleInterface.sol";
 
 contract GetUMAOracleData {
-    // Create an Optimistic oracle instance at the deployed address on Görli.
-    address public optimisticOracleAddress;
-    address token;
-
-    // Use the yes no idetifier to ask arbitary questions, such as the weather on a particular day.
-    bytes32 identifier = bytes32("YES_OR_NO_QUERY");
-
-    // Post the question in ancillary data. Note that this is a simplified form of ancillry data to work as an example. A real
-    // world prodition market would use something slightly more complex and would need to conform to a more robust structure.
-    bytes ancillaryData =
-        bytes(
-            "Q:Did the temperature on the 25th of July 2022 in Manhattan NY exceed 35c? A:1 for yes. 0 for no."
-        );
+    address public oracleAddress;
+    bytes32 public identifier = "ETH/USD";
+    int256 priceData;
 
     uint256 requestTime = 0; // Store the request time so we can re-use it later.
 
-    constructor(address _oracleAddress, address _token) {
-        optimisticOracleAddress = _oracleAddress;
-        token = _token;
+    function setOracleAddress(address _oracle) public {
+        oracleAddress = _oracle;
     }
 
     // Submit a data request to the Optimistic oracle.
-    function requestData() public {
+    function requestData(address _oracleAddress) public {
         requestTime = block.timestamp; // Set the request time to the current block time.
-        IERC20 bondCurrency = IERC20(token); // Use Görli WETH as the bond currency.
-        uint256 reward = 0; // Set the reward to 0 (so we dont have to fund it from this contract).
 
-        OptimisticOracleV2Interface oo = OptimisticOracleV2Interface(
-            optimisticOracleAddress
-        );
         // Now, make the price request to the Optimistic oracle and set the liveness to 30 so it will settle quickly.
-        oo.requestPrice(
-            identifier,
-            requestTime,
-            ancillaryData,
-            bondCurrency,
-            reward
-        );
-        oo.setCustomLiveness(identifier, requestTime, ancillaryData, 30);
-    }
+        OracleInterface oracle = OracleInterface(_oracleAddress);
+        oracle.requestPrice(identifier, requestTime);
+        require(oracle.hasPrice(identifier, requestTime));
+        int256 price = oracle.getPrice(identifier, requestTime);
 
-    // Settle the request once it's gone through the liveness period of 30 seconds. This acts the finalize the voted on price.
-    // In a real world use of the Optimistic Oracle this should be longer to give time to disputers to catch bat price proposals.
-    function settleRequest() public {
-        OptimisticOracleV2Interface oo = OptimisticOracleV2Interface(
-            optimisticOracleAddress
-        );
-        oo.settle(address(this), identifier, requestTime, ancillaryData);
+        priceData = price;
     }
 
     // Fetch the resolved price from the Optimistic Oracle that was settled.
-    function getSettledData() public view returns (int256) {
-        OptimisticOracleV2Interface oo = OptimisticOracleV2Interface(
-            optimisticOracleAddress
-        );
-        return
-            oo
-                .getRequest(
-                    address(this),
-                    identifier,
-                    requestTime,
-                    ancillaryData
-                )
-                .resolvedPrice;
+    function getPriceData() public view returns (int256) {
+        return priceData;
     }
 }
