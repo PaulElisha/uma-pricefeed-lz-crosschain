@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
-import "../mocks/ChainlinkDataMock/LZendpointMock.sol";
+import "../mocks/LZendpointMock.sol";
 import "../../src/01-ChainlinkPriceData/CrossChainDataFeedSender.sol";
 import "../../src/01-ChainlinkPriceData/CrossChainDataFeedReceiver.sol";
 import {MockV3Aggregator} from "../mocks/ChainlinkDataMock/MockV3Aggregator.sol";

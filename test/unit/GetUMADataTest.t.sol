@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
-import "../mocks/ChainlinkDataMock/LZendpointMock.sol";
+import "../mocks/LZendpointMock.sol";
 import "../../src/02-UMAOptimisticOracleData/UMASender.sol";
 import "../../src/02-UMAOptimisticOracleData/UMAReceiver.sol";
 import "../mocks/UmaMock/MockOracle.sol";
@@ -27,6 +27,10 @@ contract GetUMADataTest is Test, Constants {
         mockFinder = new MockFinder(address(this));
         mockTimer = new MockTimer();
         mockIdentifierWhitelist = new MockIdentifierWhitelist(address(this));
+
+        vm.prank(mockIdentifierWhitelist.owner());
+
+        mockIdentifierWhitelist.addSupportedIdentifier(identifier);
 
         vm.prank(mockFinder.owner());
 
