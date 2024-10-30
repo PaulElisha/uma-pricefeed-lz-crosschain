@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../03-UmaOptimisticPriceData-Goerli/GetUMAPriceData.sol";
+import "../03-UmaOptimisticPriceData/GetUMAPriceData.sol";
 import "../../script/UMAPriceData/NetworkConfig.s.sol";
 import "../lzApp/NonblockingLzApp.sol";
 
-contract UMASender is NonblockingLzApp {
+contract UmaSender is NonblockingLzApp {
     GetUMAPriceData getUMAPriceData;
     uint256 public constant requestedTime = 30;
 

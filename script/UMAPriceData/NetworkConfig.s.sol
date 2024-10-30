@@ -41,8 +41,8 @@ contract NetworkConfig is Script, Constants {
     function getTestnetConfig() public view returns (Config memory) {
         Config memory config = configs[testnetID];
         config.lzendpoint = 0x6EDCE65403992e310A62460808c4b910D972f10f;
-        config.collateral = 0x9069070A69389dc23BB5A3Df86C213b074809634;
-        config.finder = 0xDC6b80D38004F495861E081e249213836a2F3217;
+        config.collateral = 0xd38E5c25935291fFD51C9d66C3B7384494bb099A;
+        config.finder = 0xf4C48eDAd256326086AEfbd1A53e1896815F8f13;
         config
             .priceIdentifier = 0x4c494e4b55534400000000000000000000000000000000000000000000000000;
         config.timer = address(0x0);

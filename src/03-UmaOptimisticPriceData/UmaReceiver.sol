@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "../lzApp/NonblockingLzApp.sol";
 import "forge-std/console.sol";
 
-contract UMAReceiver is NonblockingLzApp {
+contract UmaReceiver is NonblockingLzApp {
     uint256 public data;
 
     event PriceDataReceived(uint256);

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Script.sol";
-import "../../src/03-UmaOptimisticPriceData-Goerli/GetUMAPriceData.sol";
+import "../../src/03-UmaOptimisticPriceData/GetUMAPriceData.sol";
 import "../UMAPriceData/NetworkConfig.s.sol";
 import "../../test/mocks/UmaMock/MockTimer.sol";
 
