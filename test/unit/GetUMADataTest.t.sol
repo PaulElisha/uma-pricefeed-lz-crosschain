@@ -21,16 +21,12 @@ contract GetUMADataTest is Test, Constants {
     MockFinder mockFinder;
     MockTimer mockTimer;
 
-    bytes32 public identifier = "ETH/USD";
+    bytes32 public constant identifier = "ETH/USD";
 
     function setUp() public {
         mockFinder = new MockFinder(address(this));
         mockTimer = new MockTimer();
         mockIdentifierWhitelist = new MockIdentifierWhitelist(address(this));
-
-        vm.prank(mockIdentifierWhitelist.owner());
-
-        mockIdentifierWhitelist.addSupportedIdentifier(identifier);
 
         vm.prank(mockFinder.owner());
 
@@ -38,6 +34,10 @@ contract GetUMADataTest is Test, Constants {
             OracleInterfaces.IdentifierWhitelist,
             address(mockIdentifierWhitelist)
         );
+
+        vm.prank(mockIdentifierWhitelist.owner());
+
+        mockIdentifierWhitelist.addSupportedIdentifier(identifier);
 
         hoax(address(0x1), 10 ether);
 

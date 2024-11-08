@@ -4,12 +4,11 @@ pragma solidity ^0.8.0;
 import "forge-std/Script.sol";
 import "../../src/03-UmaOptimisticPriceData/GetUMAPriceData.sol";
 import "../UMAPriceData/NetworkConfig.s.sol";
-import "../../test/mocks/UmaMock/MockTimer.sol";
+import "@uma/common/implementation/AddressWhitelist.sol";
 
 contract DeployGetUMAPriceData is Script {
     GetUMAPriceData getUMAPriceData;
     NetworkConfig networkConfig;
-    MockTimer mockTimer;
 
     function run() public returns (GetUMAPriceData) {
         return deployGetUMAPriceData();
@@ -26,7 +25,6 @@ contract DeployGetUMAPriceData is Script {
         address timer = networkConfig.getTestnetConfig().timer;
 
         vm.startBroadcast();
-        mockTimer = new MockTimer();
         getUMAPriceData = new GetUMAPriceData(
             collateral,
             finder,

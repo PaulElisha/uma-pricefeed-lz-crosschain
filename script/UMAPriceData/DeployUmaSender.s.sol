@@ -18,7 +18,7 @@ contract DeployUmaSender is Script {
         address endpoint = networkConfig.getTestnetConfig().lzendpoint;
 
         vm.startBroadcast();
-        sender = new UmaSender(endpoint, sender.owner());
+        sender = new UmaSender(endpoint, address(this));
         vm.stopBroadcast();
 
         return sender;

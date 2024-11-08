@@ -2,27 +2,33 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
-import "../../script/UMAPriceData/DeployGetUMAPriceData.sol";
 import "../../script/UMAPriceData/DeployUmaSender.s.sol";
 import "../../src/03-UmaOptimisticPriceData/UmaSender.sol";
-import "../../script/UMAPriceData/NetworkConfig.s.sol";
 
-contract GetUmaPriceTest is Test {
-    // DeployUmaSender deployUmaSender;
-    NetworkConfig networkConfig;
+contract GetUmaPriceTest is Test, Constants {
+    DeployUmaSender deployUmaSender;
     UmaSender umasender;
-    uint256 public constant requestedTime = 30;
 
-    uint16 public constant sepolia = uint16(uint256(11155111));
+    uint16 testnet = uint16(testnetID);
+    uint256 internal testnetFork;
+
+    uint256 privateKey;
+    address user;
 
     function setUp() public {
-        // deployUmaSender = new DeployUmaSender();
-        networkConfig = new NetworkConfig();
-        address endpoint = networkConfig.getTestnetConfig().lzendpoint;
-        umasender = new UmaSender(endpoint, address(this));
+        deployUmaSender = new DeployUmaSender();
+        umasender = deployUmaSender.run();
+
+        privateKey = vm.envUint("private_key");
+        user = vm.addr(privateKey);
+
+        testnetFork = vm.createFork(sepolia_testnet);
+        vm.selectFork(testnetFork);
     }
 
     function testRequestOraclePrice() public {
-        umasender.sendPriceData(sepolia);
+        // vm.prank(user);
+        umasender.sendPriceData(testnet);
+        // vm.stopPrank();
     }
 }
